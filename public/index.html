@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>Real time editing</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+	<script src="../socket.io/socket.io.js"></script>
+	<script>
+	$(document).ready(function () {
+		var textarea = $('#area');
+		var socket = io.connect('http://localhost');
+		
+		console.log("hej");
+		
+		socket.on('someone connected', function (data) {
+			console.log("Someoneconnected");
+			$('#connect').text('Someone just connected!');
+		});
+		
+		textarea.keyup(function () {
+			socket.emit('writing', textarea.val());
+			console.log("Keyup, vafan visa meddelandet!");
+		});
+		
+		socket.on('updateMessage', function(data) {
+			console.log(data);
+			console.log("Update the message");
+			msgReceived(data.text);
+		});
+		
+		function msgReceived(msg){
+			textarea.val("");
+		  	textarea.val(msg);
+		}
+		
+		/*
+		
+		socket.emit('updateNewUser', textarea.val(), function (data) {
+			msgReceived(data);
+		});
+		
+		textarea.keyup(function () {
+			socket.emit('message', textarea.val(), function (data) {
+				msgReceived(data);
+			});
+			console.log("Keyup, vafan visa meddelandet!");
+		});
+		*/
+		
+	});
+	</script>
+</head>
+<body>
+	<textarea name="" id="area" cols="30" rows="10"></textarea>
+	<p id="connect"></p>
+</body>
+</html>
