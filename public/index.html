@@ -28,6 +28,12 @@
 			msgReceived(data.text);
 		});
 		
+		socket.on('updateNewUser', function(data) {
+			console.log(data);
+			console.log("Update the message");
+			msgReceived(data);
+		});
+		
 		function msgReceived(msg){
 			textarea.val("");
 		  	textarea.val(msg);

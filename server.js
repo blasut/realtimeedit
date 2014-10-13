@@ -16,14 +16,22 @@ setInterval(function() {
 
 
 sio.sockets.on('connection', function (socket) {
+	// adds the number of clients currently connected
 	clients += 1;
 	console.log("New client connected");
 	
+	// Makes sure the new user has the current version of the document
+	sio.sockets.emit('updateNewUser', currentMessage);
+	
+	// Shows the "someone has connected message"
 	socket.broadcast.emit('someone connected');
 	console.log("Broadcast the emit");
 	
+	// when the user writes, we have to update.
+	// this is local to every socket.
 	socket.on('writing', function(message, fn) {
-		currentMessage = currentMessage + message;
+		currentMessage = message;
+		// this is global, to all sockets. So all connected users get the same version
 		sio.sockets.emit('updateMessage', { text: message });
 		
 		// debugging
@@ -32,6 +40,7 @@ sio.sockets.on('connection', function (socket) {
 	});
 	
 });
+
 sio.sockets.on('disconnect', function() {
 	clients -= 1;
 });
